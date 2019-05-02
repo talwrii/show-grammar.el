@@ -622,7 +622,7 @@ entire buffer, subject to narrowing."
 (point)
 
 (if (not (f-exists? "~/.config/emacs-show-grammar"))
-  (f-exists
+  (f-exists (show-grammar-build-wordlist)))
 
 (defun show-grammar-build-wordlist ()
   (interactive)
@@ -647,7 +647,6 @@ entire buffer, subject to narrowing."
 ;;; easy-to-protect
 
 (provide 'show-grammar-mode)
-
 ;; TODO
 ;; Toggle adding word/sentence count to status bar
 ;; Pluralization
@@ -655,4 +654,3 @@ entire buffer, subject to narrowing."
 ;; Split general writing back out
 
 ;;; show-grammar-mode.el ends here
-
