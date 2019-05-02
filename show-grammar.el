@@ -1,6 +1,6 @@
-;;; show-grammar-mode.el --- Improve your writing (especially about art)
+;;; show-grammar-mode.el --- Highlight grammatical features in emacs for proof reading.
 ;;
-;; Used show-grammar-mode as a scaffold, which was written by Sacha Chaua
+;; Used artbollocks-mode as a scaffold, which was written by Sacha Chaua
 
 ;; Author: Tal Wrii, Rob Myers <rob@robmyers.org>, Sacha Chua <sacha@sachachua.com>
 ;; URL: https://github.com/talwrii/show-grammar-mode
@@ -10,7 +10,6 @@
 ;; Based on fic-mode.el
 ;; Copyright (C) 2010, Trey Jackson <bigfaceworm(at)gmail(dot)com>
 ;;
-;; Non-show-grammar words from: http://matt.might.net/articles/
 ;;
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU Affero General Public License as published by
@@ -25,35 +24,33 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ;;
-;; 2012-06-16: Renamed functions and variables to avoid collisions.
-;; Incompatible changes, so please review your configuration. - Sacha
-;; Chua
-;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Extra thanks to:
-;; Brian van den Broek (words: contextuality, dialetic, problematize)
-;; Isabel Brison (words: alterity, mise en abîme)
-;; mneilsen, behaghel, russell, xfq, gleb, ejmr, tarsius (Emacs Lisp improvements)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; Commentary:
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; This project is very much experimental. The idea is that when *writing* and editing
+;; (rather than reading) some sort of "syntax highlighting" of grammatical features can
+;; improve one's writing both in terms of catching mistakes early and make the writing
+;; choices one is making more apparent. 
+
+;; When coding syntax highlighting can act as a sort of "six sense" making one aware
+;; of things you might not otherwise we aware of. Over time one notices when the
+;; syntax highlighter does not behave as expected causing one to detect errors and choices
+;; it is hoped that a similar sort of process can take place when writing and editing.
+
 ;; Usage
 ;;
-;; To use, save show-grammar-mode.el to a directory in your load-path.
+;; To use, save show-grammar-mode.el to a directory in your load-path or install with straight
 ;;
-;; (require 'show-grammar-mode)
+;; (require 'show-grammar)
 ;; (add-hook 'text-mode-hook 'show-grammar-mode)
 ;;
 ;; or
 ;;
 ;; M-x show-grammar-mode
 ;;
-;; NOTE: If you manually turn on show-grammar-mode,
-;; you you might need to force re-fontification initially:
-;;
-;;   M-x font-lock-fontify-buffer
+;; The default mode is quite "colorful". You might prefer to look at different types
+;; of highlighting in order for different steps of proof reading.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; Code:
@@ -91,7 +88,7 @@
   :group 'show-grammar-mode)
 
 
-(defcustom show-grammar-weasel-words t
+(defcustom show-grammar-weasel-word t
   "Whether to check for weasel words"
   :type '(boolean)
   :group 'show-grammar-mode)
@@ -136,6 +133,11 @@
   "The face for lexical illusions words"
   :group 'show-grammar-mode)
 
+(defface show-grammar-capital-face
+  '((t (:foreground "black" :background "red")))
+  "The face for lexical illusions words"
+  :group 'show-grammar-mode)
+
 (defface show-grammar-homophones-face
   '((t (:foreground "Gray" :background "White")))
   "The face for homophones"
@@ -156,9 +158,9 @@
   "The face for a conjunction"
   :group 'show-grammar-mode)
 
-(defface show-grammar-weasel-words-face
+(defface show-grammar-weasel-word-face
   '((t (:foreground "Brown" :background "White")))
-  "The face for weasel-words words"
+  "The face for weasel-word words"
   :group 'show-grammar-mode)
 
 (defface show-grammar-face-jargon
@@ -212,7 +214,7 @@
 ;; Weasel words
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setq show-grammar-weasel-words-regex "\\b\\(basically\\|many\\|various\\|very\\|fairly\\|several\\|extremely\\|exceedingly\\|quite\\|remarkably\\|few\\|surprisingly\\|mostly\\|largely\\|huge\\|tiny\\|\\(\\(are\\|is\\) a number\\)\\|excellent\\|interestingly\\|significantly\\|substantially\\|clearly\\|vast\\|relatively\\|completely\\|quickly\|easily\|just\\)\\b")
+(setq show-grammar-weasel-word-regex "\\b\\(basically\\|many\\|various\\|very\\|fairly\\|several\\|extremely\\|exceedingly\\|quite\\|remarkably\\|few\\|surprisingly\\|mostly\\|largely\\|huge\\|tiny\\|\\(\\(are\\|is\\) a number\\)\\|excellent\\|interestingly\\|significantly\\|substantially\\|clearly\\|vast\\|relatively\\|completely\\|quickly\|easily\|just\\)\\b")
 
 
 
@@ -328,8 +330,8 @@
 (setq show-grammar-comment-regex ">.*")
 
 
-(defun show-grammar-weasel-words-search-for-keyword (limit)
-  (show-grammar-search-for-keyword show-grammar-weasel-words-regex limit))
+(defun show-grammar-weasel-word-search-for-keyword (limit)
+  (show-grammar-search-for-keyword show-grammar-weasel-word-regex limit))
 
 (defun show-grammar-search-for-jargon (limit)
   (show-grammar-search-for-keyword show-grammar-jargon-regex limit))
@@ -342,97 +344,66 @@
   '((show-grammar-placeholder-search-for-keyword
      (1 'show-grammar-placeholder-face t))))
 
-(setq show-grammar-adj-list (s-split "\n" (f-read "~/.config/emacs-show-grammar/adj.list")))
-(setq show-grammar-verb-list (append (list "was" "does" "is" "are") (s-split "\n" (f-read "~/.config/emacs-show-grammar/verb.list"))))
-(setq show-grammar-noun-list (append (list "was" "does" "is" "are") (s-split "\n" (f-read "~/.config/emacs-show-grammar/noun.list"))))
+(defvar show-grammar-adj-list (s-split "\n" (f-read "~/.config/emacs-show-grammar/adj.list")))
+(defvar show-grammar-verb-list (append (list "was" "does" "is" "are") (s-split "\n" (f-read "~/.config/emacs-show-grammar/verb.list"))))
+(defvar show-grammar-noun-list (append (list "was" "does" "is" "are") (s-split "\n" (f-read "~/.config/emacs-show-grammar/noun.list"))))
+(defvar show-grammar-prep-list (list "as" "towards" "like"))
 
-(setq show-grammar-prep-list (list "as" "towards"))
-
-(setq show-grammar-plural-keyword-list
-  '((show-grammar-plural-search-for-keyword
-     0 'show-grammar-plural-face t)))
-
-(setq show-grammar-informal-keyword-list
-  '((show-grammar-informal-search-for-keyword
+(defvar show-grammar-keywords
+  '((plurals show-grammar-plural-face
+            ((show-grammar-plural-search-for-keyword 0 'show-grammar-plural-face t)))
+    (informal show-grammar-informal-face ((show-grammar-informal-search-for-keyword
      (0 'show-grammar-informal-face t))))
-
-(setq show-grammar-conjunction-keyword-list
-  '((show-grammar-conjunction-search-for-keyword
-     0 'show-grammar-conjunction-face t)))
-
-(setq show-grammar-subordinator-keyword-list
-  '((show-grammar-subordinator-search-for-keyword
-     0 'show-grammar-subordinator-face t)))
-
-(setq show-grammar-punct-keyword-list
-  '((show-grammar-punct-search-for-keyword
-     0 'show-grammar-punct-face t)))
-
-(setq show-grammar-capital-keyword-list
-  '((show-grammar-capital-search-for-keyword
-     1 'show-grammar-punct-face t)))
-
-(setq show-grammar-quote-keyword-list
-  '((show-grammar-quote-search-for-keyword
+    (conjunction show-grammar-conjunction-face
+                 ((show-grammar-conjunction-search-for-keyword
+                    0 'show-grammar-conjunction-face t)))
+    (subordinator show-grammar-subordinator-face ((show-grammar-subordinator-search-for-keyword
+                                                    0 'show-grammar-subordinator-face t)))
+    (punct show-grammar-punct-face ((show-grammar-punct-search-for-keyword
+                                     0 'show-grammar-punct-face t)))
+    (capital show-grammar-capital-face ((show-grammar-capital-search-for-keyword
+     1 'show-grammar-capital-face t)))
+    (quote show-grammar-quote-face ((show-grammar-quote-search-for-keyword
      0 'show-grammar-quote-face t)))
-
-(setq show-grammar-comment-keyword-list
-  '((show-grammar-comment-search-for-keyword
+    (comment 'show-grammar-comment-face ((show-grammar-comment-search-for-keyword
      0 'show-grammar-comment-face t)))
-
-(setq show-grammar-homophone-kwlist
-  '((show-grammar-homophones-search-for-keyword
+    (homophone show-grammar-homophones-face ((show-grammar-homophones-search-for-keyword
      0 'show-grammar-homophones-face t)))
+    (weasel-word show-grammar-weasel-word-face ((show-grammar-weasel-word-search-for-keyword
+                                                 0 'show-grammar-weasel-word-face t)))
+    (jargon show-grammar-face-jargon ((show-grammar-search-for-jargon
+     0 'show-grammar-face-jargon t)) )
+    (wrong show-grammar-face-wrong ((show-grammar-search-for-wrong 0 'show-grammar-face-wrong t)))))
 
-(setq show-grammar-weaselkwlist
-  '((show-grammar-weasel-words-search-for-keyword
-     0 'show-grammar-weasel-words-face t)))
+(defun show-grammar-keywords-at-point ()
+  "Find the keywords for the face at the point."
+  (nth 2 (car (cl-loop for setting in show-grammar-keywords if (equal (nth 1 setting) (face-at-point)) collect setting))))
 
-(setq show-grammar-jargon-kwlist
-  '((show-grammar-search-for-jargon
-     0 'show-grammar-face-jargon t)))
+(defun show-grammar-hide-this ()
+  (interactive)
+  (font-lock-remove-keywords nil (show-grammar-keywords-at-point))
+  (font-lock-fontify-buffer))
 
-(setq show-grammar-wrong-kwlist
-  '((show-grammar-search-for-wrong
-     0 'show-grammar-face-wrong t)))
+(defun show-grammar-only-this ()
+  (interactive)
+  (show-grammar-remove-keywords)
+  (font-lock-add-keywords nil (show-grammar-keywords-at-point))
+  (font-lock-fontify-buffer))
+
+(defun show-grammar-everything ()
+  (interactive)
+  (show-grammar-remove-keywords)
+  (show-grammar-add-keywords)
+  (font-lock-fontify-buffer))
 
 (defun show-grammar-add-keywords ()
-  (font-lock-add-keywords nil show-grammar-wrong-kwlist)
-  (font-lock-add-keywords nil show-grammar-comment-keyword-list)
-  (font-lock-add-keywords nil show-grammar-placeholder-keyword-list)
-  (font-lock-add-keywords nil show-grammar-capital-keyword-list)
-
-  (font-lock-add-keywords nil show-grammar-informal-keyword-list)
-  (font-lock-add-keywords nil show-grammar-conjunction-keyword-list)
-  (font-lock-add-keywords nil show-grammar-subordinator-keyword-list)
-
-  (font-lock-add-keywords nil show-grammar-quote-keyword-list)
-  (font-lock-add-keywords nil show-grammar-punct-keyword-list)
-  (font-lock-add-keywords nil show-grammar-homophone-kwlist)
-  (font-lock-add-keywords nil show-grammar-weaselkwlist)
-  (font-lock-add-keywords nil show-grammar-jargon-kwlist)
-  (font-lock-add-keywords nil show-grammar-plural-keyword-list)
-  (add-hook 'post-command-hook (function show-grammar-post-command-hook) t t))
-
+  (cl-loop for setting in show-grammar-keywords do (font-lock-add-keywords nil (nth 2 setting))))
 
 (defun show-grammar-remove-keywords ()
-  (font-lock-remove-keywords nil show-grammar-placeholder-keyword-list)
-  (font-lock-remove-keywords nil show-grammar-plural-keyword-list)
-  (font-lock-remove-keywords nil show-grammar-informal-keyword-list)
-  (font-lock-remove-keywords nil show-grammar-conjunction-keyword-list)
-  (font-lock-remove-keywords nil show-grammar-subordinator-keyword-list)
-  (font-lock-remove-keywords nil show-grammar-quote-keyword-list)
-  (font-lock-remove-keywords nil show-grammar-punct-keyword-list)
-  (font-lock-remove-keywords nil show-grammar-homophone-kwlist)
-  (font-lock-remove-keywords nil show-grammar-weaselkwlist)
-  (font-lock-remove-keywords nil show-grammar-capital-keyword-list)
-  (font-lock-remove-keywords nil show-grammar-jargon-kwlist)
-  (font-lock-remove-keywords nil show-grammar-wrong-kwlist)
-  (font-lock-remove-keywords nil show-grammar-comment-keyword-list)
+  (cl-loop for setting in show-grammar-keywords do (font-lock-remove-keywords nil (nth 2 setting)))
+  (remove-hook 'post-command-hook (function show-grammar-post-command-hook) t))
 
 
-  (remove-hook 'post-command-hook (function show-grammar-post-command-hook) t)
-  )
 
 (defun show-grammar-post-command-hook ()
   (interactive)
@@ -642,6 +613,7 @@ entire buffer, subject to narrowing."
     (cond
      ((equal face "homophones") (message "%s %s" face (s-join " " (show-grammar--homophones (thing-at-point 'word)))))
      ('t (message face)))))
+
 
 ;;; Maybe adjective phrase
 ;;; easy-to-protect
