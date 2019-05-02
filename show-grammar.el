@@ -4,9 +4,8 @@
 
 ;; Author: Tal Wrii, Rob Myers <rob@robmyers.org>, Sacha Chua <sacha@sachachua.com>
 ;; URL: https://github.com/talwrii/show-grammar-mode
-;; Version: 1.1.2
+;; Version: 0.1
 
-;;
 ;; Based on fic-mode.el
 ;; Copyright (C) 2010, Trey Jackson <bigfaceworm(at)gmail(dot)com>
 ;;
@@ -40,17 +39,7 @@
 
 ;; Usage
 ;;
-;; To use, save show-grammar-mode.el to a directory in your load-path or install with straight
 ;;
-;; (require 'show-grammar)
-;; (add-hook 'text-mode-hook 'show-grammar-mode)
-;;
-;; or
-;;
-;; M-x show-grammar-mode
-;;
-;; The default mode is quite "colorful". You might prefer to look at different types
-;; of highlighting in order for different steps of proof reading.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; Code:
