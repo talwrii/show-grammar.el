@@ -607,11 +607,9 @@ entire buffer, subject to narrowing."
 ;;; Maybe adjective phrase
 ;;; easy-to-protect
 
-(provide 'show-grammar-mode)
+(provide 'show-grammar)
 ;; TODO
 ;; Toggle adding word/sentence count to status bar
-;; Pluralization
-;; Incorporate diction commands if available (and advise on installation if not)
-;; Split general writing back out
+;; Incorporate dictionary commands if available (and advise on installation if not)
 
 ;;; show-grammar-mode.el ends here
